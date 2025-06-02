@@ -38,7 +38,7 @@ To get started with this project, follow the steps below:
 1. **Clone the repository**:
 
    ```bash
-   git clone https://github.com/TheProgrammingLab/Programming-Lab-Frontend.git
+   git clone https://github.com/Destinygerald/urlDowntimeTrackerServer.git
 
 
 2. **Navigate to the project directory:**
