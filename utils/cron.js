@@ -2,6 +2,7 @@ import cron from 'node-cron';
 import axios from 'axios';
 import { addDowntime, getSite } from '../db/functions/site.js';
 import { parseUrl } from './urlValidator.js';
+import { Site } from '../db/models/site.js';
 
 let CRON_JOBS = []
 
@@ -62,6 +63,7 @@ export function pauseCron (id) {
             job.cron.stop()
         }
     })
+    
 }
 
 
@@ -92,3 +94,51 @@ export function deleteCron (id) {
 
     CRON_JOBS = CRON_JOBS.filter(jobs => jobs.id != id)
 }
+
+
+export async function init_cron () {
+    const allSites = await Site.find({})
+
+    allSites.map(site => {
+
+        let schedule = "*/10 * * * *"
+    
+        switch (site.cron_duration.toLowerCase()) {
+            case "every 30 mins":
+                schedule = `0/30 * * * *`
+                break;
+            case "hourly":
+                schedule = "0 * * * *"
+                break;
+            case "every 6 hours":
+                schedule = `* */6 * * *`
+                break;
+            case "daily":
+                schedule = "0 0 * * *"
+                break;
+            case "weekly":
+                schedule = "0 0 * * 0 "
+                break;
+            default:
+                schedule = `*/10 * * * *`;
+        }
+
+        const job = cron.schedule(schedule, async() => {
+            const response = await axios.head(parseUrl(site.website))
+            const statusCode = response.status;
+            const isAccessible = statusCode >= 200 && statusCode < 400;
+        
+            if (!isAccessible) {await addDowntime(statusCode) }
+        });
+
+        CRON_JOBS.push({
+            id: site.cron_id,
+            cron: job,
+            siteId: site._id,
+            url: site.website
+        })
+    })
+
+    console.log(CRON_JOBS)
+}
+
