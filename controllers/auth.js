@@ -8,7 +8,6 @@ export const auth = passport.authenticate("google", {scope: ["profile", "email"]
 
 
 export const authCallback =  passport.authenticate("google", { 
-    // successRedirect: process.env.CLIENT_DASHBOARD_URL, 
     failureRedirect: `${process.env.SERVER_URL}/api/auth/failed` 
 })
 
