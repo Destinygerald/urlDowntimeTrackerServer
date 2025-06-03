@@ -30,7 +30,8 @@ export async function addSiteFn (req, res) {
 
     return res.status(201).json({
         status: 'created',
-        message: "successfully added site to your watch"
+        message: "successfully added site to your watch",
+        data: addedSite
     })
 }
 
@@ -115,5 +116,27 @@ export async function toggleCron (req, res) {
     return res.status(200).json({
         status: "success",
         message: `cron now ${currentState}`
+    })
+}
+
+
+export async function getSiteinfo (req, res) {
+    const { id } = req.params
+
+    const site = await getSite(id)
+    const ownerAccess = await siteOwner(id, res.user._id)
+
+    if (!site || !ownerAccess) {
+        return res.status(404).json({
+            status: "failed",
+            message: "Invalid URL ID"
+        })
+    }
+
+    const { userId, ...data } = site
+
+    return res.status(200).json({
+        status: "success",
+        data
     })
 }
