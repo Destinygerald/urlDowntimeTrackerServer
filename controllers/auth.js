@@ -23,7 +23,7 @@ export async function authCallbackAction (req, res) {
 
     const token = signResponse(user);
 
-    return res.status(200).json({
+    return res.redirect(process.env.CLIENT_DASHBOARD_URL).json({
         status: 'success',
         auth_token: token
     })
