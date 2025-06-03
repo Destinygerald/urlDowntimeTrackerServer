@@ -138,7 +138,5 @@ export async function init_cron () {
             url: site.website
         })
     })
-
-    console.log(CRON_JOBS)
 }
 
