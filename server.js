@@ -30,6 +30,13 @@ app.use(passport.session())
 
 configuration(passport)
 
+app.get('/', (req, res) => {
+	return res.status(200).json({
+		status: "success",
+		message: "The server is running"
+	})
+})
+
 app.use('/api/auth', AuthRoute)
 app.use('/api/url', UrlRoute)
 
